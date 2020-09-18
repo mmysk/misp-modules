@@ -17,7 +17,8 @@ moduleconfig = ["client_secret", "client_id"]
 def handler(q=False):
     if q is False:
         return False
-
+    request = {"module": "ctr_test", "persistent": 1, "config": {"client_secret": None, "client_id": None},
+               "hostname": "24tv.ua"}
     request = json.loads(q)
     client_secret = request.get('config', {}).get('client_secret')
     client_id = request.get('config', {}).get('client_id')
@@ -26,22 +27,18 @@ def handler(q=False):
     if not client_id:
         return {'error': 'An client_id for CTRIntegration is required.'}
 
-    url = "https://visibility.amp.cisco.com/iroh/iroh-enrich/health"
-
     client = ThreatResponse(
-        client_id=client_id,  # required
-        client_password=client_secret,  # required
+        client_id=client_id,
+        client_password=client_secret,
     )
 
-    try:
-        res = client.enrich.health()
-    except Exception:
-        return f"{url} not reachable"
+    res = client.enrich.health()
+
     r = {'results':
         [
             {
                 'types': ['text'],
-                'values': res["data"]
+                'values': [module["module"] for module in res["data"]]
             }
         ]
     }
