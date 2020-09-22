@@ -34,8 +34,7 @@ def handler(q=False):
 
     return {'results': [{
         'types': ['text'],
-        'values': [module["module"] for module in res.get("data", [])
-                   if module.get("data", {}).get("status") == "ok"]
+        'values': [module["module"] for module in res.get("data", [])]
     }]}
 
 
